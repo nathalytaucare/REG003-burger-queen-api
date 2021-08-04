@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const {
-  requireAuth,
+  // requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
 
@@ -9,23 +9,21 @@ const {
   getUsers,
 } = require('../controller/users');
 
-
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
     return next();
   }
 
-  const adminUser = {
-    email: adminEmail,
-    password: bcrypt.hashSync(adminPassword, 10),
-    roles: { admin: true },
-  };
+  // const adminUser = {
+  //   email: adminEmail,
+  //   password: bcrypt.hashSync(adminPassword, 10),
+  //   roles: { admin: true },
+  // };
 
   // TODO: crear usuaria admin
   next();
 };
-
 
 /*
  * Diagrama de flujo de una aplicación y petición en node - express :
@@ -94,8 +92,8 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-  });
+  // app.get('/users/:uid', requireAuth, (req, resp) => {
+  // });
 
   /**
    * @name POST /users
@@ -116,8 +114,8 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si ya existe usuaria con ese `email`
    */
-  app.post('/users', requireAdmin, (req, resp, next) => {
-  });
+  // app.post('/users', requireAdmin, (req, resp, next) => {
+  // });
 
   /**
    * @name PUT /users
@@ -141,8 +139,8 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  // app.put('/users/:uid', requireAuth, (req, resp, next) => {
+  // });
 
   /**
    * @name DELETE /users
@@ -160,8 +158,8 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
+  // });
 
   initAdminUser(app, next);
 };
