@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mongoose = require("mongoose");
 const express = require('express');
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
@@ -14,16 +14,15 @@ const {
 const app = express();
 
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
-const connection = mysql.createConnection(config.dbUrl);
 
-connection.connect();
-connection.query('SELECT 1 + 1 AS solution', (error, results) => {
-  if (error) {
-    return console.error(error);
-  }
-  console.log(`The solution is: ${results[0].solution}`);
-});
-connection.end();
+
+mongoose
+  .connect(config.dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(console.log("Entro"))
+  .catch(console.error("Error"));
 
 //
 
