@@ -19,8 +19,12 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
+  // eslint-disable-next-line no-console
   .then(console.log('Entro'))
   .catch(console.error('Error'));
+
+//
+
 app.set('config', config);
 app.set('pkg', pkg);
 // parse application/x-www-form-urlencoded
