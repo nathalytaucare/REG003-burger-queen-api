@@ -6,28 +6,23 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 
-const {
-  port,
-  dbUrl,
-  secret,
-} = config;
+const {port,dbUrl,secret,} = config;
+
 const app = express();
 
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
-
 mongoose
-  .connect(config.dbUrl, {
+  .connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(console.log('Entro'))
-  .catch(err => console.error(err));
+  .then(console.log('DB esta conectada'))
+  .catch(err=>console.error(err));
 
 //
 
 app.set('config', config);
 app.set('pkg', pkg);
-
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
