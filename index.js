@@ -8,7 +8,7 @@ const pkg = require('./package.json');
 
 const {
   port,
-  // dbUrl,
+  dbUrl,
   secret,
 } = config;
 const app = express();
@@ -20,9 +20,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  // eslint-disable-next-line no-console
   .then(console.log('Entro'))
-  .catch(console.error('Error'));
+  .catch(err => console.error(err));
 
 //
 
