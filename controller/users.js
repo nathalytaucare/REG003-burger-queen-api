@@ -1,3 +1,4 @@
+
  module.exports = {
 // USERS
 // GET
@@ -16,3 +17,4 @@ postUser:(req, resp, next) => {
 deleteUser:(req, resp, next) => {
 }
 }; 
+
