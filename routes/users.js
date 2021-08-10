@@ -1,13 +1,8 @@
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
-const {
-  // requireAuth,
-  requireAdmin,
-} = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const {
-  getUsers,
-} = require('../controller/users');
+const { getUsers} = require('../controller/users');
 
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -15,11 +10,11 @@ const initAdminUser = (app, next) => {
     return next();
   }
 
-  // const adminUser = {
-  //   email: adminEmail,
-  //   password: bcrypt.hashSync(adminPassword, 10),
-  //   roles: { admin: true },
-  // };
+  const adminUser = {
+    email: adminEmail,
+    password: bcrypt.hashSync(adminPassword, 10),
+    roles: { admin: true },
+  };
 
   // TODO: crear usuaria admin
   next();
