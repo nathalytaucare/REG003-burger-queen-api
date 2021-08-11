@@ -6,18 +6,19 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 
-const {port,dbUrl,secret,} = config;
+const { port, dbUrl, secret } = config;
 
 const app = express();
 
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
 mongoose
   .connect(dbUrl, {
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(console.log('DB esta conectada'))
-  .catch(err=>console.error(err));
+  .catch((err) => console.error(err));
 
 //
 
