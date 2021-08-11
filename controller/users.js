@@ -1,20 +1,13 @@
+const User = require('../models/user.model');
 
- module.exports = {
-// USERS
-// GET
-getUsers:(req, resp, next) => {
-},
-// GET
-getUser:(req, resp, next) => {
-},
-// PUT
-putUser:(req, resp, next) => {
-},
-// POST
-postUser:(req, resp, next) => {
-},
-// DELETE
-deleteUser:(req, resp, next) => {
-}
-}; 
-
+module.exports = {
+  // USERS
+  // GET
+  getUsers: (req, resp) => {
+    // resp.status(200).json(req.rows);
+    const { body } = req;
+    User.find(body)
+      .then(resp.send(body))
+      .catch(console.log);
+  },
+};

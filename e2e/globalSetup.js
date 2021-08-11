@@ -28,7 +28,6 @@ const __e2e = {
   // testObjects: [],
 };
 
-
 const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
   ...opts,
   headers: {
@@ -41,7 +40,6 @@ const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
       : {}
   ),
 });
-
 
 const fetchWithAuth = (token) => (url, opts = {}) => fetch(url, {
   ...opts,

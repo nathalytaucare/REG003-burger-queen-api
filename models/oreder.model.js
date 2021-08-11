@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const orderSchema = new Schema(
   {
@@ -32,6 +33,6 @@ const orderSchema = new Schema(
       require: false,
     },
 
-  }
+  },
 );
 module.exports = model('Order', orderSchema);
