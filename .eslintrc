@@ -10,10 +10,11 @@
     "no-underscore-dangle": "off",
     "consistent-return": "off",
     "no-shadow": "off",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["e2e/**/*.js", "**/*.spec.js"]}],
-    "no-console": ["error", {
-      "allow": ["info", "warn", "error"],
-      "linebreak-style": 0
-    }]
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["e2e/**/*.js", "**/*.spec.js"]}]
+     "linebreak-style": ["error", "unix"] 
+     "no-console": ["error", {
+       "allow": ["info", "warn", "error"],
+       "linebreak-style": 0
+     }]
   }
 }

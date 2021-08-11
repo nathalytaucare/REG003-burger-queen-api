@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-const productSchema = mongoose.Schema(
+const { Schema, model } = require('mongoose');
+
+const productSchema = new Schema(
   {
     name: {
       type: String,
@@ -12,7 +13,7 @@ const productSchema = mongoose.Schema(
     image: {
       type: String,
       required: false,
-      default: 'burger1.jpg',
+      default: 'https://therockstore.com.ar/wp-content/uploads/2021/06/noImg-24.png',
     },
     type: {
       type: String,
@@ -24,6 +25,7 @@ const productSchema = mongoose.Schema(
       required: true,
     },
 
-  })
-  
-  module.exports = mongoose.model('Product', productSchema);
+  },
+);
+
+module.exports = model('Product', productSchema);
