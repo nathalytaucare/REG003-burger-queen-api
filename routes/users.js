@@ -1,7 +1,10 @@
+/* eslint-disable consistent-return */
 const bcrypt = require('bcrypt');
 // eslint-disable-next-line no-unused-vars
 const { requireAuth, requireAdmin } = require('../middleware/auth');
-const { getUsers, deleteUser, putUser } = require('../controller/users');
+const {
+  getUsers, getUser, deleteUser, putUser, postUser,
+} = require('../controller/users');
 const User = require('../models/user.model');
 
 const initAdminUser = (app, next) => {
@@ -71,8 +74,8 @@ module.exports = (app, next) => {
    * @response {Object} users[].roles
    * @response {Boolean} users[].roles.admin
    * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin
+   * @code {401} si no hay cabecera de autenticación // Pregunta
+   * @code {403} si no es ni admin // Pregunta
    */
   // app.get('/users', requireAdmin, getUsers);
   app.get('/users', getUsers);
@@ -93,11 +96,9 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-    resp.send(200, {
-      products: [],
-    });
-  });
+  // app.get('/users/:uid', requireAuth, (req, resp) => {
+  // });
+  app.get('/users/:uid', getUser);
 
   /**
    * @name POST /users
@@ -120,12 +121,7 @@ module.exports = (app, next) => {
    */
   // app.post('/users', requireAdmin, (req, resp, next) => {
   // });
-  app.post('/users', (req, resp) => {
-    const { body } = req;
-    User.create(body)
-      .then(resp.send(body))
-      .catch(console.log);
-  });
+  app.post('/users', postUser);
 
   /**
    * @name PUT /users
@@ -169,6 +165,8 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
+  // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
+  // });
   app.delete('/users/:uid', deleteUser);
 
   initAdminUser(app, next);
