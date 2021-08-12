@@ -1,9 +1,7 @@
 const bcrypt = require('bcrypt');
-
+// eslint-disable-next-line no-unused-vars
 const { requireAuth, requireAdmin } = require('../middleware/auth');
-
-const { getUsers } = require('../controller/users');
-
+const { getUsers, deleteUser, putUser } = require('../controller/users');
 const User = require('../models/user.model');
 
 const initAdminUser = (app, next) => {
@@ -17,11 +15,10 @@ const initAdminUser = (app, next) => {
     password: bcrypt.hashSync(adminPassword, 10),
     roles: { admin: true },
   };
-
-  const user = User.findOne({ adminEmail });
+  // TODO: crear usuaria admin
+  const user = User.findOne({ email: adminEmail });
 
   if (!user) {
-  // TODO: crear usuaria admin
     const newAdminUser = new User(adminUser);
     newAdminUser.save();
   }
@@ -121,10 +118,13 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si ya existe usuaria con ese `email`
    */
-  app.post('/users', (req, resp, next) => {
-    resp.status(200).send({
-      message: 'Usuario Creado',
-    });
+  // app.post('/users', requireAdmin, (req, resp, next) => {
+  // });
+  app.post('/users', (req, resp) => {
+    const { body } = req;
+    User.create(body)
+      .then(resp.send(body))
+      .catch(console.log);
   });
 
   /**
@@ -149,8 +149,9 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  // app.put('/users/:uid', requireAuth, (req, resp, next) => {
+  // });
+  app.put('/users/:uid', putUser);
 
   /**
    * @name DELETE /users
@@ -168,8 +169,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  app.delete('/users/:uid', deleteUser);
 
   initAdminUser(app, next);
 };

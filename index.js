@@ -13,6 +13,7 @@ const app = express();
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
 mongoose
   .connect(dbUrl, {
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
