@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
 // eslint-disable-next-line no-unused-vars
 const { requireAuth, requireAdmin } = require('../middleware/auth');
-const { getUsers, getUser, deleteUser, putUser } = require('../controller/users');
+const {
+  getUsers, getUser, deleteUser, putUser, postUsers,
+} = require('../controller/users');
 const User = require('../models/user.model');
 
 const initAdminUser = (app, next) => {
@@ -118,12 +120,7 @@ module.exports = (app, next) => {
    */
   // app.post('/users', requireAdmin, (req, resp, next) => {
   // });
-  app.post('/users', (req, resp) => {
-    const { body } = req;
-    User.create(body)
-      .then(resp.send(body))
-      .catch(console.log);
-  });
+  app.post('/users', postUsers);
 
   /**
    * @name PUT /users
