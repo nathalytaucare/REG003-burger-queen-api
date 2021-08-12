@@ -3,15 +3,17 @@ const User = require('../models/user.model');
 module.exports = {
   // USERS
   // GET
-  postUsers: (req, resp) => {
+  postUsers: (req, resp, next) => {
     const user = new User();
     user.email = req.body.email;
     user.password = req.body.password;
     user.roles.admin = req.body.roles.admin;
-
+    if (req.body.email === '' || req.body.password === '') {
+      return next(400);
+    }
     user.save((err, userStored) => {
       if (err) {
-        resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
+        return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
       }
       resp.status(200).send({ user: userStored });
     });
@@ -34,7 +36,7 @@ module.exports = {
         return resp.status(500).send({ message: 'Error al realizar la petición' });
       }
       if (!user) {
-        return resp.status(404).send({ message: 'El producto no existe' });
+        return resp.status(404).send({ message: 'El usuario no existe' });
       }
       resp.status(200).send({ user });
     });
@@ -45,6 +47,9 @@ module.exports = {
       if (err) {
         return resp.status(500).send({ message: 'error' });
       }
+      if (!user) {
+        return resp.status(404).send({ message: 'El usuario no existe' });
+      }
       user.remove((err) => {
         if (err) {
           return resp.status(500).send({ message: 'error' });
@@ -53,12 +58,18 @@ module.exports = {
       });
     });
   },
-  putUser: (req, resp) => {
+  putUser: (req, resp, next) => {
+    if (!req.body.email && !req.body.password) {
+      return next(400);
+    }
     const { uid } = req.params;
     const update = req.body;
     User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
       if (err) {
         return resp.status(500).send({ message: 'error' });
+      }
+      if (!userUpdate) {
+        return resp.status(404).send({ message: 'El usuario no existe' });
       }
       resp.status(200).send({ user: userUpdate });
     });
