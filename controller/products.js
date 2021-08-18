@@ -33,22 +33,6 @@ module.exports = {
       resp.send(200, { products });
     });
   },
-  /* getProducts: (req, resp) => {
-    const options = {
-      page: parseInt(req.query.page, 10) || 10,
-      limit: parseInt(req.query.limit, 10) || 1,
-    };
-
-    Product.paginate({}, options, (err, products) => {
-      if (err) {
-        return resp.status(500).send({ message: 'Error al mostrar datos de productos' });
-      }
-      if (!products) {
-        return resp.status(404).send({ message: 'Error mo se encontaron productos' });
-      }
-      resp.send(200, { products });
-    });
-  }, */
   // get/:PRODUCTID
   getProduct: (req, resp) => {
     const { productId } = req.params;
@@ -62,6 +46,7 @@ module.exports = {
       resp.status(200).send({ product });
     });
   },
+
   // DELETE
   deleteProduct: (req, resp) => {
     const { productId } = req.params;
@@ -72,8 +57,8 @@ module.exports = {
       if (!product) {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
-      product.remove((fail) => {
-        if (fail) {
+      product.remove((err) => {
+        if (err) {
           return resp.status(500).send({ message: 'Error al eliminar producto' });
         }
         resp.status(200).send({ message: 'se eliminó el producto' });

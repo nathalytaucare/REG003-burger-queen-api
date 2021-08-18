@@ -1,8 +1,8 @@
-/* eslint-disable consistent-return */
 const Order = require('../models/order.model');
 const Product = require('../models/product.model');
 
 module.exports = {
+
   // ORDERS
   // GET
   getOrders: (req, resp) => {
@@ -81,14 +81,15 @@ module.exports = {
       if (!order) {
         return resp.status(404).send({ message: 'La orden no existe' });
       }
-      order.remove((fail) => {
-        if (fail) {
+      order.remove((err) => {
+        if (err) {
           return resp.status(500).send({ message: 'error' });
         }
         resp.status(200).send({ message: 'se eliminó la orden' });
       });
     });
   },
+
   // PUT
   putOrder: (req, resp, next) => {
     if (!req.body.client) {
