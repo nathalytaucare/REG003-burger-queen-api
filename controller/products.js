@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const Product = require('../models/product.model');
 
 module.exports = {
@@ -14,11 +13,11 @@ module.exports = {
     if (req.body.name === '' || req.body.price === '') {
       return next(400);
     }
-    product.save((err, productStored) => {
+    return product.save((err, productStored) => {
       if (err) {
         return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
       }
-      resp.status(200).send({ product: productStored });
+      return resp.status(200).send({ product: productStored });
     });
   },
   // GET
@@ -30,7 +29,7 @@ module.exports = {
       if (!products) {
         return resp.status(404).send({ message: 'Error mo se encontaron productos' });
       }
-      resp.send(200, { products });
+      return resp.send(200, { products });
     });
   },
   // get/:PRODUCTID
@@ -43,7 +42,7 @@ module.exports = {
       if (!product) {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
-      resp.status(200).send({ product });
+      return resp.status(200).send({ product });
     });
   },
 
@@ -57,11 +56,12 @@ module.exports = {
       if (!product) {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
-      product.remove((err) => {
-        if (err) {
+
+      return product.remove((fail) => {
+        if (fail) {
           return resp.status(500).send({ message: 'Error al eliminar producto' });
         }
-        resp.status(200).send({ message: 'se eliminó el producto' });
+        return resp.status(200).send({ message: 'se eliminó el producto' });
       });
     });
   },
@@ -72,14 +72,14 @@ module.exports = {
     }
     const { productId } = req.params;
     const update = req.body;
-    Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
+    return Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
       if (err) {
         return resp.status(500).send({ message: 'Error al realizar la petición' });
       }
       if (!productUpdate) {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
-      resp.status(200).send({ product: productUpdate });
+      return resp.status(200).send({ product: productUpdate });
     });
   },
 };

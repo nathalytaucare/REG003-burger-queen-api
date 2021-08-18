@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const User = require('../models/user.model');
 
 module.exports = {
@@ -11,7 +10,7 @@ module.exports = {
     if (req.body.email === '' || req.body.password === '') {
       return next(400);
     }
-    user.save((err, userStored) => {
+    return user.save((err, userStored) => {
       if (err) {
         return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
       }
@@ -32,7 +31,7 @@ module.exports = {
       if (!users) {
         return resp.status(404).send({ message: 'No hay usuarios' });
       }
-      resp.status(200).send({ users });
+      return resp.status(200).send({ users });
     });
   },
   // GET/:UID
@@ -45,7 +44,7 @@ module.exports = {
       if (!user) {
         return resp.status(404).send({ message: 'El usuario no existe' });
       }
-      resp.status(200).send({ user });
+      return resp.status(200).send({ user });
     });
   },
   // DELETE
@@ -58,11 +57,11 @@ module.exports = {
       if (!user) {
         return resp.status(404).send({ message: 'El usuario no existe' });
       }
-      user.remove((fail) => {
+      return user.remove((fail) => {
         if (fail) {
           return resp.status(500).send({ message: 'error' });
         }
-        resp.status(200).send({ message: 'se eliminó el usuario' });
+        return resp.status(200).send({ message: 'se eliminó el usuario' });
       });
     });
   },
@@ -73,14 +72,14 @@ module.exports = {
     }
     const { uid } = req.params;
     const update = req.body;
-    User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
+    return User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
       if (err) {
         return resp.status(500).send({ message: 'error' });
       }
       if (!userUpdate) {
         return resp.status(404).send({ message: 'El usuario no existe' });
       }
-      resp.status(200).send({ user: userUpdate });
+      return resp.status(200).send({ user: userUpdate });
     });
   },
 };
