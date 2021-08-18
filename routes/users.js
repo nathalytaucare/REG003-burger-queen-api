@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
-const { getUsers, getUser, deleteUser, putUser, postUser} = require('../controller/users');
+const {
+  getUsers, getUser, deleteUser, putUser, postUser,
+} = require('../controller/users');
 const User = require('../models/user.model');
 
 const initAdminUser = (app, next) => {
@@ -20,7 +22,7 @@ const initAdminUser = (app, next) => {
     const newAdminUser = new User(adminUser);
     newAdminUser.save();
   }
-  next();
+  return next();
 };
 
 /*
