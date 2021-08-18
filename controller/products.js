@@ -1,8 +1,9 @@
+/* eslint-disable consistent-return */
 const Product = require('../models/product.model');
 
 module.exports = {
-  // USERS
-  // GET
+  // productS
+  // POST
   postProduct: (req, resp, next) => {
     const product = new Product();
     product.name = req.body.name;
@@ -20,6 +21,7 @@ module.exports = {
       resp.status(200).send({ product: productStored });
     });
   },
+  // GET
   getProducts: (req, resp) => {
     Product.find({}, (err, products) => {
       if (err) {
@@ -31,6 +33,7 @@ module.exports = {
       resp.send(200, { products });
     });
   },
+  // get/:PRODUCTID
   getProduct: (req, resp) => {
     const { productId } = req.params;
     Product.findById(productId, (err, product) => {
@@ -43,6 +46,8 @@ module.exports = {
       resp.status(200).send({ product });
     });
   },
+
+  // DELETE
   deleteProduct: (req, resp) => {
     const { productId } = req.params;
     Product.findById(productId, (err, product) => {
@@ -60,6 +65,7 @@ module.exports = {
       });
     });
   },
+  // PUT
   putProduct: (req, resp, next) => {
     if (!req.body.name && !req.body.price) {
       return next(400);

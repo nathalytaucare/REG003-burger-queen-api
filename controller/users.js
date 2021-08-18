@@ -1,9 +1,9 @@
+/* eslint-disable consistent-return */
 const User = require('../models/user.model');
 
 module.exports = {
-  // USERS
-  // GET
-  postUsers: (req, resp, next) => {
+  // POST
+  postUser: (req, resp, next) => {
     const user = new User();
     user.email = req.body.email;
     user.password = req.body.password;
@@ -15,9 +15,10 @@ module.exports = {
       if (err) {
         return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
       }
-      resp.status(200).send({ user: userStored });
+      return resp.status(200).send({ user: userStored });
     });
   },
+  // GET
   getUsers: (req, resp) => {
     const options = {
       limit: parseInt(req.query.limit, 10) || 10,
@@ -29,11 +30,12 @@ module.exports = {
         return resp.status(500).send({ message: 'error' });
       }
       if (!users) {
-        return resp.status(404).send({ message: 'error' });
+        return resp.status(404).send({ message: 'No hay usuarios' });
       }
       resp.status(200).send({ users });
     });
   },
+  // GET/:UID
   getUser: (req, resp) => {
     const { uid } = req.params;
     User.findById(uid, (err, user) => {
@@ -46,6 +48,7 @@ module.exports = {
       resp.status(200).send({ user });
     });
   },
+  // DELETE
   deleteUser: (req, resp) => {
     const { uid } = req.params;
     User.findById(uid, (err, user) => {
@@ -55,14 +58,15 @@ module.exports = {
       if (!user) {
         return resp.status(404).send({ message: 'El usuario no existe' });
       }
-      user.remove((err) => {
-        if (err) {
+      user.remove((fail) => {
+        if (fail) {
           return resp.status(500).send({ message: 'error' });
         }
         resp.status(200).send({ message: 'se eliminó el usuario' });
       });
     });
   },
+  // PUT
   putUser: (req, resp, next) => {
     if (!req.body.email && !req.body.password) {
       return next(400);

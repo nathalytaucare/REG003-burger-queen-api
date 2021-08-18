@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
 
@@ -12,21 +13,25 @@ const orderSchema = new Schema(
     products: [
       {
         _id: false,
-        qty: Number,
+        qty: {
+          type: Number,
+          default: 1,
+        },
         product: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: 'Product',
         },
       },
     ],
     status: {
       type: String,
+      enum: ['pending', 'canceled', 'delivering', 'delivered'],
       default: 'pending',
     },
     dateEntry: {
       type: Date,
       default: Date.now(),
-      required: true,
+      required: false,
     },
     dateProcessed: {
       type: Date,
@@ -35,4 +40,6 @@ const orderSchema = new Schema(
 
   },
 );
+
 module.exports = mongoose.model('Order', orderSchema);
+

@@ -1,12 +1,12 @@
-const {
-  // eslint-disable-next-line no-unused-vars
+
+/* const {
   requireAuth,
   // eslint-disable-next-line no-unused-vars
   requireAdmin,
-} = require('../middleware/auth');
+} = require('../middleware/auth'); */
 
 const {
-  getProducts, getProduct, postProduct, putProduct, deleteProduct,
+  getProducts, getProduct, deleteProduct, putProduct, postProduct,
 } = require('../controller/products');
 
 /** @module products */

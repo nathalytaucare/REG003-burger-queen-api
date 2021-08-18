@@ -1,8 +1,9 @@
+/* eslint-disable consistent-return */
 const bcrypt = require('bcrypt');
 // eslint-disable-next-line no-unused-vars
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const {
-  getUsers, getUser, deleteUser, putUser, postUsers,
+  getUsers, getUser, deleteUser, putUser, postUser,
 } = require('../controller/users');
 const User = require('../models/user.model');
 
@@ -73,8 +74,8 @@ module.exports = (app, next) => {
    * @response {Object} users[].roles
    * @response {Boolean} users[].roles.admin
    * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin
+   * @code {401} si no hay cabecera de autenticación // Pregunta
+   * @code {403} si no es ni admin // Pregunta
    */
   // app.get('/users', requireAdmin, getUsers);
   app.get('/users', getUsers);
@@ -120,7 +121,7 @@ module.exports = (app, next) => {
    */
   // app.post('/users', requireAdmin, (req, resp, next) => {
   // });
-  app.post('/users', postUsers);
+  app.post('/users', postUser);
 
   /**
    * @name PUT /users
