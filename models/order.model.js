@@ -11,7 +11,10 @@ const orderSchema = new Schema(
     products: [
       {
         _id: false,
-        qty: Number,
+        qty: {
+          type: Number,
+          default: 1,
+        },
         product: {
           type: Schema.Types.ObjectId,
           ref: 'Product',
@@ -20,12 +23,13 @@ const orderSchema = new Schema(
     ],
     status: {
       type: String,
+      enum: ['pending', 'canceled', 'delivering', 'delivered'],
       default: 'pending',
     },
     dateEntry: {
       type: Date,
       default: Date.now(),
-      required: true,
+      required: false,
     },
     dateProcessed: {
       type: Date,
