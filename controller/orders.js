@@ -30,7 +30,7 @@ module.exports = {
       if (!order) {
         return resp.send(404);
       }
-      resp.status(200).send({ order });
+      return resp.status(200).send({ order });
     });
   },
   // POST
@@ -81,11 +81,11 @@ module.exports = {
       if (!order) {
         return resp.status(404).send({ message: 'La orden no existe' });
       }
-      order.remove((err) => {
-        if (err) {
-          return resp.status(500).send({ message: 'error' });
+      return order.remove((fail) => {
+        if (fail) {
+          return resp.status(500).send({ message: `Error al salvar la base de datos:${fail}` });
         }
-        resp.status(200).send({ message: 'se eliminó la orden' });
+        return resp.status(200).send({ message: 'se eliminó la orden' });
       });
     });
   },
@@ -97,14 +97,14 @@ module.exports = {
     }
     const { orderId } = req.params;
     const update = req.body;
-    Order.findByIdAndUpdate(orderId, update, (err, orderUpdate) => {
+    return Order.findByIdAndUpdate(orderId, update, (err, orderUpdate) => {
       if (err) {
         return resp.status(500).send({ message: 'Error al realizar la petición' });
       }
       if (!orderUpdate) {
         return resp.status(404).send({ message: 'La orden no existe' });
       }
-      resp.status(200).send({ order: orderUpdate });
+      return resp.status(200).send({ order: orderUpdate });
     });
   },
 };

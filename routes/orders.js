@@ -3,7 +3,7 @@ const {
   requireAuth,
 } = require('../middleware/auth');
 const {
-  getOrders, getOrder, postOrder, deleteOrder,
+  getOrders, getOrder, postOrder, deleteOrder, putOrder,
 } = require('../controller/orders');
 
 /** @module orders */
