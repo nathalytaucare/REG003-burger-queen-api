@@ -19,14 +19,19 @@ module.exports = {
     });
   },
   getUsers: (req, resp) => {
-    User.find({}, (err, users) => {
+    const options = {
+      limit: parseInt(req.query.limit, 10) || 10,
+      page: parseInt(req.query.page, 10) || 1,
+      select: '-password',
+    };
+    User.paginate({}, options, (err, users) => {
       if (err) {
         return resp.status(500).send({ message: 'error' });
       }
       if (!users) {
         return resp.status(404).send({ message: 'error' });
       }
-      resp.send(200, { users });
+      resp.status(200).send({ users });
     });
   },
   getUser: (req, resp) => {

@@ -1,10 +1,12 @@
 const {
+  // eslint-disable-next-line no-unused-vars
   requireAuth,
+  // eslint-disable-next-line no-unused-vars
   requireAdmin,
 } = require('../middleware/auth');
-// getProducts, getProduct, deleteProduct, putProduct,
+
 const {
-  getProducts, postProduct,
+  getProducts, getProduct, postProduct, putProduct, deleteProduct,
 } = require('../controller/products');
 
 /** @module products */
@@ -54,7 +56,7 @@ module.exports = (app, nextMain) => {
    */
   // app.get('/products/:productId', requireAuth, (req, resp, next) => {
   // });
-  // app.get('/products/:productId', getProduct);
+  app.get('/products/:productId', getProduct);
 
   /**
    * @name POST /products
@@ -107,7 +109,7 @@ module.exports = (app, nextMain) => {
    */
   // app.put('/products/:productId', requireAdmin, (req, resp, next) => {
   // });
-  // app.put('/products/:productId', putProduct);
+  app.put('/products/:productId', putProduct);
 
   /**
    * @name DELETE /products
@@ -129,7 +131,7 @@ module.exports = (app, nextMain) => {
    */
   // app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
   // });
-  // app.delete('/products/:productId', deleteProduct);
+  app.delete('/products/:productId', deleteProduct);
 
   nextMain();
 };

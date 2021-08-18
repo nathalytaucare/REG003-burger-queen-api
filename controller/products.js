@@ -17,63 +17,63 @@ module.exports = {
       if (err) {
         return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
       }
-      resp.status(200).send({ user: productStored });
+      resp.status(200).send({ product: productStored });
     });
   },
   getProducts: (req, resp) => {
     Product.find({}, (err, products) => {
       if (err) {
-        return resp.status(500).send({ message: 'error' });
+        return resp.status(500).send({ message: 'Error al mostrar datos de productos' });
       }
       if (!products) {
-        return resp.status(404).send({ message: 'error' });
+        return resp.status(404).send({ message: 'Error mo se encontaron productos' });
       }
       resp.send(200, { products });
     });
   },
-  // getUser: (req, resp) => {
-  //   const { uid } = req.params;
-  //   User.findById(uid, (err, user) => {
-  //     if (err) {
-  //       return resp.status(500).send({ message: 'Error al realizar la petición' });
-  //     }
-  //     if (!user) {
-  //       return resp.status(404).send({ message: 'El usuario no existe' });
-  //     }
-  //     resp.status(200).send({ user });
-  //   });
-  // },
-  // deleteUser: (req, resp) => {
-  //   const { uid } = req.params;
-  //   User.findById(uid, (err, user) => {
-  //     if (err) {
-  //       return resp.status(500).send({ message: 'error' });
-  //     }
-  //     if (!user) {
-  //       return resp.status(404).send({ message: 'El usuario no existe' });
-  //     }
-  //     user.remove((err) => {
-  //       if (err) {
-  //         return resp.status(500).send({ message: 'error' });
-  //       }
-  //       resp.status(200).send({ message: 'se eliminó el usuario' });
-  //     });
-  //   });
-  // },
-  // putUser: (req, resp, next) => {
-  //   if (!req.body.email && !req.body.password) {
-  //     return next(400);
-  //   }
-  //   const { uid } = req.params;
-  //   const update = req.body;
-  //   User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
-  //     if (err) {
-  //       return resp.status(500).send({ message: 'error' });
-  //     }
-  //     if (!userUpdate) {
-  //       return resp.status(404).send({ message: 'El usuario no existe' });
-  //     }
-  //     resp.status(200).send({ user: userUpdate });
-  //   });
-  // },
+  getProduct: (req, resp) => {
+    const { productId } = req.params;
+    Product.findById(productId, (err, product) => {
+      if (err) {
+        return resp.status(500).send({ message: 'Error al realizar la petición' });
+      }
+      if (!product) {
+        return resp.status(404).send({ message: 'El producto no existe' });
+      }
+      resp.status(200).send({ product });
+    });
+  },
+  deleteProduct: (req, resp) => {
+    const { productId } = req.params;
+    Product.findById(productId, (err, product) => {
+      if (err) {
+        return resp.status(500).send({ message: 'Error al realizar la petición' });
+      }
+      if (!product) {
+        return resp.status(404).send({ message: 'El producto no existe' });
+      }
+      product.remove((err) => {
+        if (err) {
+          return resp.status(500).send({ message: 'Error al eliminar producto' });
+        }
+        resp.status(200).send({ message: 'se eliminó el producto' });
+      });
+    });
+  },
+  putProduct: (req, resp, next) => {
+    if (!req.body.name && !req.body.price) {
+      return next(400);
+    }
+    const { productId } = req.params;
+    const update = req.body;
+    Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
+      if (err) {
+        return resp.status(500).send({ message: 'Error al realizar la petición' });
+      }
+      if (!productUpdate) {
+        return resp.status(404).send({ message: 'El producto no existe' });
+      }
+      resp.status(200).send({ product: productUpdate });
+    });
+  },
 };
