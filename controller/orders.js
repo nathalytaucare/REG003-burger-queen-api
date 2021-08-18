@@ -15,7 +15,7 @@ module.exports = {
           if (!order) {
             return resp.status(404).send({ message: 'error' });
           }
-          resp.status(200).send(orders);
+          return resp.status(200).send(orders);
         });
     });
   },
