@@ -1,11 +1,12 @@
 const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   // POST
   postUser: (req, resp, next) => {
     const user = new User();
     user.email = req.body.email;
-    user.password = req.body.password;
+    user.password = bcrypt.hashSync(req.body.password, 10);
     user.roles.admin = req.body.roles.admin;
     if (req.body.email === '' || req.body.password === '') {
       return next(400);

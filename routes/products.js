@@ -1,4 +1,3 @@
-
 /* const {
   requireAuth,
   // eslint-disable-next-line no-unused-vars

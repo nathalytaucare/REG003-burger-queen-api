@@ -1,6 +1,4 @@
-/* eslint-disable consistent-return */
 const bcrypt = require('bcrypt');
-// eslint-disable-next-line no-unused-vars
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const {
   getUsers, getUser, deleteUser, putUser, postUser,
@@ -12,7 +10,6 @@ const initAdminUser = (app, next) => {
   if (!adminEmail || !adminPassword) {
     return next();
   }
-
   const adminUser = {
     email: adminEmail,
     password: bcrypt.hashSync(adminPassword, 10),
@@ -25,7 +22,7 @@ const initAdminUser = (app, next) => {
     const newAdminUser = new User(adminUser);
     newAdminUser.save();
   }
-  next();
+  return next();
 };
 
 /*
