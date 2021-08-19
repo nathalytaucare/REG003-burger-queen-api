@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const bcrypt = require('bcrypt');
 const config = require('../config');
 const User = require('../models/user.model');
 
@@ -9,7 +11,7 @@ module.exports = (app, nextMain) => {
   /**
    * @name /auth
    * @description Crea token de autenticación.
-   * @path {POST} /auth
+   * @path {POST} /authcondition
    * @body {String} email Correo
    * @body {String} password Contraseña
    * @response {Object} resp
@@ -24,15 +26,24 @@ module.exports = (app, nextMain) => {
     if (!email || !password) {
       return next(400);
     }
-
     const user = await User.findOne({ email });
 
     if (!user) return next(404); // no encontrado
 
-    const passwordMatch = await user.comparePassword(password);
-    if (!passwordMatch) return next(401); // no esta autorizado
+    const passwordMatch = bcrypt.compareSync(password, user.password);
+    if (!passwordMatch) return next(401);// no esta autorizado
 
-    const token = jwt.sign({ uid: user._id }, secret); // genera un token
+    // console.log(passwordMatch);
+
+    const token = jwt.sign(
+      {
+        uid: user._id,
+        email: user.email,
+        roles: user.roles,
+        iat: moment().unix(),
+        exp: moment().add(14, 'days').unix(),
+      }, secret,
+    ); // genera un token
     return resp.json({ token }); // devuelve el token
   });
 

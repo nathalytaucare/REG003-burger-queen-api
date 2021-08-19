@@ -1,6 +1,5 @@
-/* eslint-disable consistent-return */
 const bcrypt = require('bcrypt');
-// eslint-disable-next-line no-unused-vars
+
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const {
   getUsers, getUser, deleteUser, putUser, postUser,

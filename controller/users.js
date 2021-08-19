@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 
 module.exports = {
@@ -5,7 +6,7 @@ module.exports = {
   postUser: (req, resp, next) => {
     const user = new User();
     user.email = req.body.email;
-    user.password = req.body.password;
+    user.password = bcrypt.hashSync(req.body.password, 10);
     user.roles.admin = req.body.roles.admin;
     if (req.body.email === '' || req.body.password === '') {
       return next(400);

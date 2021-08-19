@@ -1,6 +1,10 @@
 const {
   getUsers,
-} = require('../../controller/users');
+  getUser,
+  postUser,
+  deleteUser,
+  putUser,
+} = require('../users');
 
 describe('getUsers', () => {
   it('should get users collection', (done) => {
