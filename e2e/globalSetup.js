@@ -108,7 +108,7 @@ module.exports = () => new Promise((resolve, reject) => {
   // TODO: Configurar DB de tests
 
   console.info('Staring local server...');
-  const child = spawn('npm', ['start', process.env.PORT || 8888], {
+  const child = spawn('node', ['index.js', process.env.PORT || 8888], {
     cwd: path.resolve(__dirname, '../'),
     stdio: ['ignore', 'pipe', 'pipe'],
   });
