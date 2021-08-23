@@ -1,5 +1,4 @@
 const {
-  // eslint-disable-next-line no-unused-vars
   requireAuth,
 } = require('../middleware/auth');
 const {
@@ -36,7 +35,7 @@ module.exports = (app, nextMain) => {
    */
   // app.get('/orders', requireAuth, (req, resp, next) => {
   // });
-  app.get('/orders', getOrders);
+  app.get('/orders', requireAuth, getOrders);
 
   /**
    * @name GET /orders/:orderId
@@ -61,7 +60,7 @@ module.exports = (app, nextMain) => {
    */
   // app.get('/orders/:orderId', requireAuth, (req, resp, next) => {
   // });
-  app.get('/orders/:orderId', getOrder);
+  app.get('/orders/:orderId', requireAuth, getOrder);
 
   /**
    * @name POST /orders
@@ -91,7 +90,7 @@ module.exports = (app, nextMain) => {
    */
   // app.post('/orders', requireAuth, (req, resp, next) => {
   // });
-  app.post('/orders', postOrder);
+  app.post('/orders', requireAuth, postOrder);
   /**
    * @name PUT /orders
    * @description Modifica una orden
@@ -123,7 +122,7 @@ module.exports = (app, nextMain) => {
 
   //  app.put('/orders/:orderId', requireAuth, (req, resp, next) => {
   //  });
-  app.put('/orders/:orderId', putOrder);
+  app.put('/orders/:orderId', requireAuth, putOrder);
 
   /**
    * @name DELETE /orders
@@ -149,7 +148,7 @@ module.exports = (app, nextMain) => {
   // app.delete('/orders/:orderId', requireAuth, (req, resp, next) => {
   // });
 
-  app.delete('/orders/:orderId', deleteOrder);
+  app.delete('/orders/:orderId', requireAuth, deleteOrder);
 
   nextMain();
 };

@@ -38,6 +38,7 @@ const orderSchema = new Schema(
     },
 
   },
+  { versionKey: false },
 );
 
 module.exports = mongoose.model('Order', orderSchema);

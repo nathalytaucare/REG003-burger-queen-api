@@ -74,8 +74,8 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación // Pregunta
    * @code {403} si no es ni admin // Pregunta
    */
-  // app.get('/users', requireAdmin, getUsers);
-  app.get('/users', getUsers);
+  app.get('/users', requireAdmin, getUsers);
+  // app.get('/users', getUsers);
 
   /**
    * @name GET /users/:uid
@@ -90,12 +90,12 @@ module.exports = (app, next) => {
    * @response {Boolean} user.roles.admin
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin o la misma usuaria
+   * @code {403} si no es ni admin o la misma usuaria???
    * @code {404} si la usuaria solicitada no existe
    */
   // app.get('/users/:uid', requireAuth, (req, resp) => {
   // });
-  app.get('/users/:uid', getUser);
+  app.get('/users/:uid', requireAuth, getUser);
 
   /**
    * @name POST /users
@@ -118,7 +118,7 @@ module.exports = (app, next) => {
    */
   // app.post('/users', requireAdmin, (req, resp, next) => {
   // });
-  app.post('/users', postUser);
+  app.post('/users', requireAdmin, postUser);
 
   /**
    * @name PUT /users
@@ -144,7 +144,7 @@ module.exports = (app, next) => {
    */
   // app.put('/users/:uid', requireAuth, (req, resp, next) => {
   // });
-  app.put('/users/:uid', putUser);
+  app.put('/users/:uid', requireAuth, putUser);
 
   /**
    * @name DELETE /users
@@ -164,7 +164,7 @@ module.exports = (app, next) => {
    */
   // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
   // });
-  app.delete('/users/:uid', deleteUser);
+  app.delete('/users/:uid', requireAuth, deleteUser);
 
   initAdminUser(app, next);
 };
