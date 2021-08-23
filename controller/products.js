@@ -8,7 +8,6 @@ module.exports = {
     product.name = req.body.name;
     product.price = req.body.price;
     product.image = req.body.image;
-    product.dateEntry = req.body.dateEntry;
 
     if (req.body.name === '' || req.body.price === '') {
       return next(400);

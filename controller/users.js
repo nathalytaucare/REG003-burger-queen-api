@@ -4,10 +4,11 @@ const User = require('../models/user.model');
 module.exports = {
   // POST
   postUser: (req, resp, next) => {
-    const user = new User();
+    const user = new User(); 
     user.email = req.body.email;
     user.password = bcrypt.hashSync(req.body.password, 10);
     user.roles.admin = req.body.roles.admin;
+
     if (req.body.email === '' || req.body.password === '') {
       return next(400);
     }
@@ -32,21 +33,25 @@ module.exports = {
       if (!users) {
         return resp.status(404).send({ message: 'No hay usuarios' });
       }
-      return resp.status(200).send({ users });
+      return resp.status(200).send({ user: users.docs });
     });
   },
   // GET/:UID
-  getUser: (req, resp) => {
-    const { uid } = req.params;
-    User.findById(uid, (err, user) => {
-      if (err) {
-        return resp.status(500).send({ message: 'Error al realizar la petición' });
-      }
-      if (!user) {
-        return resp.status(404).send({ message: 'El usuario no existe' });
-      }
-      return resp.status(200).send({ user });
-    });
+  getUser: async (req, resp, next) => {
+    try {
+      const { uid } = req.params;
+      await User.findById(uid, (err, user) => {
+        if (err) {
+          return next(500);
+        }
+        if (!user) {
+          return next(404);
+        }
+        return resp.status(200).send({ user });
+      });
+    } catch (error) {
+      return next(404);
+    }
   },
   // DELETE
   deleteUser: (req, resp) => {
