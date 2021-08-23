@@ -1,8 +1,7 @@
-/* const {
+const {
   requireAuth,
-  // eslint-disable-next-line no-unused-vars
   requireAdmin,
-} = require('../middleware/auth'); */
+} = require('../middleware/auth');
 
 const {
   getProducts, getProduct, deleteProduct, putProduct, postProduct,
@@ -34,7 +33,7 @@ module.exports = (app, nextMain) => {
    */
   // app.get('/products', requireAuth, (req, resp, next) => {
   // });
-  app.get('/products', getProducts);
+  app.get('/products', requireAuth, getProducts);
 
   /**
    * @name GET /products/:productId
@@ -55,7 +54,7 @@ module.exports = (app, nextMain) => {
    */
   // app.get('/products/:productId', requireAuth, (req, resp, next) => {
   // });
-  app.get('/products/:productId', getProduct);
+  app.get('/products/:productId', requireAuth, getProduct);
 
   /**
    * @name POST /products
@@ -81,7 +80,8 @@ module.exports = (app, nextMain) => {
    */
   // app.post('/products', requireAdmin, (req, resp, next) => {
   // });
-  app.post('/products', postProduct);
+  // app.post('/products', postProduct);
+  app.post('/products', requireAdmin, postProduct);
 
   /**
    * @name PUT /products
@@ -108,7 +108,7 @@ module.exports = (app, nextMain) => {
    */
   // app.put('/products/:productId', requireAdmin, (req, resp, next) => {
   // });
-  app.put('/products/:productId', putProduct);
+  app.put('/products/:productId', requireAdmin, putProduct);
 
   /**
    * @name DELETE /products
@@ -130,7 +130,7 @@ module.exports = (app, nextMain) => {
    */
   // app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
   // });
-  app.delete('/products/:productId', deleteProduct);
+  app.delete('/products/:productId', requireAdmin, deleteProduct);
 
   nextMain();
 };
