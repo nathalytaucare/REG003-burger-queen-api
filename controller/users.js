@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
-
+const { isAdmin } = require('../middleware/auth');
+const { validateEmail } = require('./util/util');
 // PAGINATION
 /*
 const paginate = (sourceList, page, perPage) => {
@@ -108,34 +109,43 @@ module.exports = {
 
       } ) */
     } catch (error) {
+      console.log(`Error: ${error}`);
       return next(404);
     }
   },
   // DELETE
-  deleteUser: (req, resp) => {
-    const { uid } = req.params;
-    User.findById(uid, (err, user) => {
-      if (err) {
-        return resp.status(500).send({ message: 'error' });
-      }
-      if (!user) {
-        return resp.status(404).send({ message: 'El usuario no existe' });
-      }
-      return user.remove((fail) => {
-        if (fail) {
+  deleteUser: async (req, resp, next) => {
+    try {
+      const { uid } = req.params;
+      await User.findById(uid, async (err, user) => {
+        if (err) {
           return resp.status(500).send({ message: 'error' });
         }
-        return resp.status(200).send({ message: 'se eliminó el usuario' });
+        if (!user) {
+          return resp.status(404).send({ message: 'El usuario no existe' });
+        }
+        await user.remove((fail) => {
+          if (fail) {
+            return resp.status(500).send({ message: 'error' });
+          }
+          return resp.status(200).send({ message: 'se eliminó el usuario' });
+        });
       });
-    });
+    } catch (error) {
+      return next(404);
+    }
   },
   // PUT
   putUser: async (req, resp, next) => {
     try {
       const { uid } = req.params;
       const update = req.body;
-      const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      const user = (emailRegex.test(uid))
+      // console.log(isAdmin(req));
+      if (!isAdmin(req) && req.body.roles) {
+        return next(403);
+      }
+      update.password = bcrypt.hashSync(req.body.password, 10);
+      const user = (validateEmail(uid))
         ? await User.findOneAndUpdate({ email: uid }, update)
         : await User.findByIdAndUpdate(uid, update);
 
@@ -144,6 +154,7 @@ module.exports = {
       }
 
       if (!req.body.email && !req.body.password) {
+        console.log('entro en put 400');
         return next(400);
       }
 

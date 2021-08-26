@@ -1,6 +1,6 @@
 module.exports = {
-  validateEmail: (uid) => {
+  validateEmail: (email) => {
     const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-    return emailRegex.test(uid);
+    return emailRegex.test(email);
   },
 };
