@@ -45,10 +45,10 @@ module.exports = {
     }));
 
     if (!req.body.products || req.body.products.length === 0) {
-      return next(400);
+      return resp.send(400);
     }
     if (req.body.client === '') {
-      return next(400);
+      return resp.send(400);
     }
 
     switch (req.body.status) {

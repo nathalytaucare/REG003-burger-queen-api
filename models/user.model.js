@@ -16,8 +16,7 @@ const userSchema = mongoose.Schema(
       require: true,
     },
     roles: { admin: { type: Boolean, default: false } },
-
-  },
+  }, { versionKey: false },
 );
 
 userSchema.plugin(mongoosePaginate);

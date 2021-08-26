@@ -6,6 +6,7 @@ const productSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     price: {
       type: Number,
@@ -25,8 +26,8 @@ const productSchema = mongoose.Schema(
       default: Date.now(),
       required: false,
     },
-
   },
+  { versionKey: false },
 );
 productSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('Product', productSchema);

@@ -11,7 +11,7 @@ module.exports = (app, nextMain) => {
   /**
    * @name /auth
    * @description Crea token de autenticación.
-   * @path {POST} /authcondition
+   * @path {POST} /auth
    * @body {String} email Correo
    * @body {String} password Contraseña
    * @response {Object} resp
@@ -22,12 +22,13 @@ module.exports = (app, nextMain) => {
    */
   app.post('/auth', async (req, resp, next) => {
     const { email, password } = req.body;
+    console.log(req.body);
 
     if (!email || !password) {
+      console.log("entro");
       return next(400);
     }
     const user = await User.findOne({ email });
-
     if (!user) return next(404); // no encontrado
 
     const passwordMatch = bcrypt.compareSync(password, user.password);
@@ -35,6 +36,7 @@ module.exports = (app, nextMain) => {
 
     const token = jwt.sign({
       uid: user._id,
+      // password: user.password,
       email: user.email,
       roles: user.roles,
       iat: moment().unix(),
@@ -42,6 +44,7 @@ module.exports = (app, nextMain) => {
     },
     secret); // genera un token
     return resp.json({ token }); // devuelve el token
+    // resp.status(200).send({ token });
   });
 
   return nextMain();
