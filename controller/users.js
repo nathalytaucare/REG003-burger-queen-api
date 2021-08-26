@@ -108,7 +108,6 @@ module.exports = {
 
       } ) */
     } catch (error) {
-      console.log(`Error: ${error}`);
       return next(404);
     }
   },
@@ -139,11 +138,11 @@ module.exports = {
       const user = (emailRegex.test(uid))
         ? await User.findOneAndUpdate({ email: uid }, update)
         : await User.findByIdAndUpdate(uid, update);
-      console.log(user);
 
       if (!user) {
         return resp.status(404).send({ message: 'El usuario no existe' });
       }
+
       if (!req.body.email && !req.body.password) {
         return next(400);
       }

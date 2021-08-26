@@ -108,11 +108,8 @@ module.exports = () => new Promise((resolve, reject) => {
   }
 
   // TODO: Configurar DB de tests
-<<<<<<< HEAD
-=======
   // await setUp();
   // process.env.DB_URL = process.env.MONGO_URL;
->>>>>>> a3b4fb5bfdf9b71214a9eb1092427770cc235ed7
   mongodbsetUp()
     .then(() => {
       console.info('Staring local server...');

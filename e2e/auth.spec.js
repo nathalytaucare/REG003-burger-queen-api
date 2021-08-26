@@ -41,14 +41,7 @@ describe('POST /auth', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then(({ token }) => {
-<<<<<<< HEAD
-        console.log(`hola${token}`);
-        return fetchWithAuth(token)(`/users/${config.adminEmail}`);
-=======
-        fetchWithAuth(token)(`/users/${config.adminEmail}`);
->>>>>>> a3b4fb5bfdf9b71214a9eb1092427770cc235ed7
-      })
+      .then(({ token }) => fetchWithAuth(token)(`/users/${config.adminEmail}`))
       .then((resp) => {
         expect(resp.status).toBe(200);
         return resp.json();
