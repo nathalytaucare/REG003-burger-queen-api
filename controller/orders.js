@@ -8,8 +8,8 @@ module.exports = {
   getOrders: (req, resp) => {
     Order.find({}, (err, orders) => {
       Product.populate(orders, { path: 'products.product' },
-        (erro, order) => {
-          if (err) {
+        (fail, order) => {
+          if (fail) {
             return resp.status(500).send({ message: 'error' });
           }
           if (!order) {
@@ -25,10 +25,10 @@ module.exports = {
 
     Order.findById(orderId, (err, order) => {
       if (err) {
-        return resp.send(500);
+        return resp.status(500);
       }
       if (!order) {
-        return resp.send(404);
+        return resp.status(404);
       }
       return resp.status(200).send({ order });
     });
@@ -36,6 +36,7 @@ module.exports = {
   // POST
   postOrder: async (req, resp, next) => {
     const newOrder = new Order();
+    if (!req.body.products || req.body.products.length === 0) return next(400);
     newOrder.userId = req.body.userId;
     newOrder.client = req.body.client;
     newOrder.status = req.body.status;

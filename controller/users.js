@@ -6,11 +6,10 @@ module.exports = {
   postUser: (req, resp, next) => {
     const user = new User();
     user.email = req.body.email;
+    if (req.body.email === '' || req.body.password === '') return next(400);
     user.password = bcrypt.hashSync(req.body.password, 10);
-    user.roles.admin = req.body.roles.admin;
-    if (req.body.email === '' || req.body.password === '') {
-      return next(400);
-    }
+    // user.roles.admin = req.body.roles.admin;
+    
     return user.save((err, userStored) => {
       if (err) {
         return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
@@ -20,6 +19,8 @@ module.exports = {
   },
   // GET
   getUsers: (req, resp) => {
+    const fullUrl = `<${req.protocol}://${req.get('Host')}${req.originalUrl}>`;
+    console.log(fullUrl);
     const options = {
       limit: parseInt(req.query.limit, 10) || 10,
       page: parseInt(req.query.page, 10) || 1,
@@ -40,7 +41,7 @@ module.exports = {
     const { uid } = req.params;
     User.findById(uid, (err, user) => {
       if (err) {
-        return resp.status(500).send({ message: 'Error al realizar la petición' });
+        return resp.status(404).send({ message: 'Error al realizar la petición' }); // cambio 500 a 404
       }
       if (!user) {
         return resp.status(404).send({ message: 'El usuario no existe' });

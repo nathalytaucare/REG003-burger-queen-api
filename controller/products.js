@@ -14,7 +14,7 @@ module.exports = {
     }
     return product.save((err, productStored) => {
       if (err) {
-        return resp.status(500).send({ message: `Error al salvar la base de datos:${err}` });
+        return resp.status(400).send({ message: `Error al salvar la base de datos:${err}` }); // duda cambio de 500 a 400
       }
       return resp.status(200).send({ product: productStored });
     });
