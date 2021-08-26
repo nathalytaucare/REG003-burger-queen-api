@@ -22,10 +22,8 @@ module.exports = (app, nextMain) => {
    */
   app.post('/auth', async (req, resp, next) => {
     const { email, password } = req.body;
-    console.log(req.body);
 
     if (!email || !password) {
-      console.log("entro");
       return next(400);
     }
     const user = await User.findOne({ email });
@@ -42,7 +40,7 @@ module.exports = (app, nextMain) => {
       exp: moment().add(14, 'days').unix(),
     },
     secret); // genera un token
-    //return resp.json({ token }); // devuelve el token
+    // return resp.json({ token }); // devuelve el token
     return resp.status(200).send({ token });
   });
 
