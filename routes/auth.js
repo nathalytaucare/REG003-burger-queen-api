@@ -42,8 +42,7 @@ module.exports = (app, nextMain) => {
       exp: moment().add(14, 'days').unix(),
     },
     secret); // genera un token
-    console.log({ token });
-    // return resp.json({ token }); // devuelve el token
+    //return resp.json({ token }); // devuelve el token
     return resp.status(200).send({ token });
   });
 
