@@ -71,8 +71,8 @@ module.exports = (app, next) => {
    * @response {Object} users[].roles
    * @response {Boolean} users[].roles.admin
    * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación // Pregunta
-   * @code {403} si no es ni admin // Pregunta
+   * @code {401} si no hay cabecera de autenticación
+   * @code {403} si no es ni admin
    */
   app.get('/users', requireAdmin, getUsers);
   // app.get('/users', getUsers);
@@ -164,7 +164,7 @@ module.exports = (app, next) => {
    */
   // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
   // });
-  app.delete('/users/:uid', requireAuth, deleteUser);
+  app.delete('/users/:uid', requireAdmin, deleteUser);
 
   initAdminUser(app, next);
 };

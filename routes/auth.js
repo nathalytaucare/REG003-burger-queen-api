@@ -36,15 +36,15 @@ module.exports = (app, nextMain) => {
 
     const token = jwt.sign({
       uid: user._id,
-      // password: user.password,
       email: user.email,
       roles: user.roles,
       iat: moment().unix(),
       exp: moment().add(14, 'days').unix(),
     },
     secret); // genera un token
-    return resp.json({ token }); // devuelve el token
-    // resp.status(200).send({ token });
+    console.log({ token });
+    // return resp.json({ token }); // devuelve el token
+    return resp.status(200).send({ token });
   });
 
   return nextMain();

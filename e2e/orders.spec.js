@@ -40,7 +40,13 @@ describe('POST /orders', () => {
       })
       .then(([product, user]) => fetchAsTestUser('/orders', {
         method: 'POST',
+<<<<<<< HEAD
         body: { products: [{ productId: product._id, qty: 5 }], client: 'client', userId: user._id },
+=======
+        /* body: { products: [{ productId: product._id, qty: 5, client: 'client' }], userId: user._id }*/
+        body: { products: [{ productId: product._id, qty: 5 }], client: 'client', userId: user._id },
+
+>>>>>>> a3b4fb5bfdf9b71214a9eb1092427770cc235ed7
       }))
       .then((resp) => {
         expect(resp.status).toBe(200);

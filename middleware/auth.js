@@ -17,8 +17,9 @@ module.exports = (secret) => (req, resp, next) => {
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
     const userInfo = await User.findById(decodedToken.uid, { email: 1, roles: 1 });
+
     if (!userInfo) {
-      return next(404);
+      return next(403);
     }
     req.userInfo = userInfo;
     return next();
