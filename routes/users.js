@@ -5,7 +5,7 @@ const {
 } = require('../controller/users');
 const User = require('../models/user.model');
 
-const initAdminUser = (app, next) => {
+const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
     return next();
@@ -16,11 +16,11 @@ const initAdminUser = (app, next) => {
     roles: { admin: true },
   };
   // TODO: crear usuaria admin
-  const user = User.findOne({ email: adminEmail });
+  const user = await User.findOne({ email: adminEmail });
 
   if (!user) {
     const newAdminUser = new User(adminUser);
-    newAdminUser.save();
+    await newAdminUser.save();
   }
   return next();
 };
@@ -71,8 +71,8 @@ module.exports = (app, next) => {
    * @response {Object} users[].roles
    * @response {Boolean} users[].roles.admin
    * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación // Pregunta
-   * @code {403} si no es ni admin // Pregunta
+   * @code {401} si no hay cabecera de autenticación
+   * @code {403} si no es ni admin
    */
   app.get('/users', requireAdmin, getUsers);
   // app.get('/users', getUsers);
@@ -95,7 +95,7 @@ module.exports = (app, next) => {
    */
   // app.get('/users/:uid', requireAuth, (req, resp) => {
   // });
-  app.get('/users/:uid', requireAuth, getUser);
+  app.get('/users/:uid', requireAdmin, getUser);
 
   /**
    * @name POST /users
@@ -144,7 +144,7 @@ module.exports = (app, next) => {
    */
   // app.put('/users/:uid', requireAuth, (req, resp, next) => {
   // });
-  app.put('/users/:uid', requireAuth, putUser);
+  app.put('/users/:uid', requireAdmin, putUser);
 
   /**
    * @name DELETE /users
@@ -164,7 +164,7 @@ module.exports = (app, next) => {
    */
   // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
   // });
-  app.delete('/users/:uid', requireAuth, deleteUser);
+  app.delete('/users/:uid', requireAdmin, deleteUser);
 
   initAdminUser(app, next);
 };
