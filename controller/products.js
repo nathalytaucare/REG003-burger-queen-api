@@ -7,7 +7,6 @@ module.exports = {
     const product = new Product();
     product.name = req.body.name;
     product.price = req.body.price;
-    product.image = req.body.image;
 
     if (req.body.name === '' || req.body.price === '') {
       return next(400);
@@ -16,7 +15,7 @@ module.exports = {
       if (err) {
         return resp.status(400).send({ message: `Error al salvar la base de datos:${err}` }); // duda cambio de 500 a 400
       }
-      return resp.status(200).send({ product: productStored });
+      return resp.status(200).send(productStored);
     });
   },
   // GET
@@ -28,7 +27,7 @@ module.exports = {
       if (!products) {
         return resp.status(404).send({ message: 'Error mo se encontaron productos' });
       }
-      return resp.send(200, { products });
+      return resp.send(200, products);
     });
   },
   // get/:PRODUCTID
@@ -36,12 +35,12 @@ module.exports = {
     const { productId } = req.params;
     Product.findById(productId, (err, product) => {
       if (err) {
-        return resp.status(500).send({ message: 'Error al realizar la petición' });
+        return resp.status(404).send({ message: 'Error al realizar la petición' });
       }
       if (!product) {
-        return resp.status(404).send({ message: 'El producto no existe' });
+        return resp.status(404).send({ message: 'El producto no existe' });//  ver los errores
       }
-      return resp.status(200).send({ product });
+      return resp.status(200).send(product);
     });
   },
 
@@ -50,7 +49,7 @@ module.exports = {
     const { productId } = req.params;
     Product.findById(productId, (err, product) => {
       if (err) {
-        return resp.status(500).send({ message: 'Error al realizar la petición' });
+        return resp.status(404).send({ message: 'Error al realizar la petición' });
       }
       if (!product) {
         return resp.status(404).send({ message: 'El producto no existe' });
@@ -66,19 +65,24 @@ module.exports = {
   },
   // PUT
   putProduct: (req, resp, next) => {
-    if (!req.body.name && !req.body.price) {
-      return next(400);
-    }
     const { productId } = req.params;
     const update = req.body;
+    console.log(req.body.price);
     return Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
       if (err) {
-        return resp.status(500).send({ message: 'Error al realizar la petición' });
+        console.log('err', productUpdate);
+        return resp.status(404).send({ message: 'Error al realizar la petición' });
       }
+      // if (typeof req.body.price !== 'number' && typeof req.body.name !== 'string') {
+      //   return next(400);
+      // }
       if (!productUpdate) {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
-      return resp.status(200).send({ product: productUpdate });
+      if (!req.body.name && !req.body.price) {
+        return next(400);
+      }
+      return resp.status(200).send(productUpdate);
     });
   },
 };

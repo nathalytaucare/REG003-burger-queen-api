@@ -30,7 +30,7 @@ module.exports = {
       if (!order) {
         return resp.status(404);
       }
-      return resp.status(200).send({ order });
+      return resp.status(200).send(order);
     });
   },
   // POST
@@ -70,7 +70,7 @@ module.exports = {
     const populatedOrder = await newOrderSaved
       .populate('products.product')
       .execPopulate();
-    return resp.status(200).send({ order: populatedOrder });
+    return resp.status(200).send(populatedOrder);
   },
   // DELETE
   deleteOrder: (req, resp) => {
@@ -105,7 +105,7 @@ module.exports = {
       if (!orderUpdate) {
         return resp.status(404).send({ message: 'La orden no existe' });
       }
-      return resp.status(200).send({ order: orderUpdate });
+      return resp.status(200).send(orderUpdate);
     });
   },
 };
