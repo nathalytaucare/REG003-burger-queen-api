@@ -34,7 +34,7 @@ module.exports = {
         return next(400);
       }
       const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      if (!emailRegex.test(req.body.email) || req.body.password.length < 5) {
+      if (!emailRegex.test(req.body.email) || req.body.password.length < 3) {
         return next(400);
       }
       return user.save((err, userStored) => {
@@ -81,10 +81,7 @@ module.exports = {
   getUser: async (req, resp, next) => {
     try {
       const { uid } = req.params;
-
-      // const emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-      const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      const user = (emailRegex.test(uid))
+      const user = (validateEmail(uid))
         ? await User.findOne({ email: uid })
         : await User.findById(uid);
 
@@ -117,14 +114,33 @@ module.exports = {
   deleteUser: async (req, resp, next) => {
     try {
       const { uid } = req.params;
-      await User.findById(uid, async (err, user) => {
+      const user = (validateEmail(uid));
+      // ? await User.findOne({ email: uid })
+      // : await User.findById(uid);
+      if (!user) {
+        await User.findById(uid, async (err, userId) => {
+          if (err) {
+            return resp.status(404).send({ message: 'Error' });
+          }
+          if (!userId) {
+            return resp.status(404).send({ message: 'El usuario no existe' });
+          }
+          await userId.remove((fail) => {
+            if (fail) {
+              return resp.status(500).send({ message: 'error' });
+            }
+            return resp.status(200).send({ message: 'se eliminó el usuario' });
+          });
+        });
+      }
+      await User.findOne({ email: uid }, async (err, userEmail) => {
         if (err) {
-          return resp.status(500).send({ message: 'error' });
+          return resp.status(404).send({ message: 'Error' });
         }
-        if (!user) {
+        if (!userEmail) {
           return resp.status(404).send({ message: 'El usuario no existe' });
         }
-        await user.remove((fail) => {
+        await userEmail.remove((fail) => {
           if (fail) {
             return resp.status(500).send({ message: 'error' });
           }
@@ -140,26 +156,34 @@ module.exports = {
     try {
       const { uid } = req.params;
       const update = req.body;
-      // console.log(isAdmin(req));
-      if (!isAdmin(req) && req.body.roles) {
-        return next(403);
-      }
-      update.password = bcrypt.hashSync(req.body.password, 10);
+      if (!isAdmin(req) && req.body.roles) return next(403);
       const user = (validateEmail(uid))
-        ? await User.findOneAndUpdate({ email: uid }, update)
-        : await User.findByIdAndUpdate(uid, update);
-
+        ? await User.findOne({ email: uid })
+        : await User.findById(uid);
+      if (!user) return next(404);
+      if (!req.body.email && !req.body.password) return next(400);
+      update.password = bcrypt.hashSync(req.body.password, 10);
       if (!user) {
-        return resp.status(404).send({ message: 'El usuario no existe' });
+        await User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
+          if (err) {
+            return resp.status(500).send({ message: 'Error al realizar la petición' });
+          }
+          if (!userUpdate) {
+            return resp.status(404).send({ message: 'El usuario no existe' });
+          }
+          return resp.status(200).send({ product: userUpdate });
+        });
       }
-
-      if (!req.body.email && !req.body.password) {
-        console.log('entro en put 400');
-        return next(400);
-      }
-
-      return resp.status(200).send({ user });
-    } catch (error) {
+      await User.findOneAndUpdate({ email: uid }, update, (err, userUpdate) => {
+        if (err) {
+          return resp.status(500).send({ message: 'Error al realizar la petición' });
+        }
+        if (!userUpdate) {
+          return resp.status(404).send({ message: 'El usuario no existe' });
+        }
+        return resp.status(200).send({ product: userUpdate });
+      });
+    } catch (err) {
       return next(404);
     }
   },
