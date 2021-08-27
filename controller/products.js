@@ -3,21 +3,24 @@ const Product = require('../models/product.model');
 module.exports = {
   // productS
   // POST
-  postProduct: (req, resp, next) => {
-    const product = new Product();
-    product.name = req.body.name;
-    product.price = req.body.price;
-    product.image = req.body.image;
+  postProduct: async (req, resp, next) => {
+    try {
+      const product = await new Product();
+      product.name = req.body.name;
+      product.price = req.body.price;
 
-    if (req.body.name === '' || req.body.price === '') {
-      return next(400);
-    }
-    return product.save((err, productStored) => {
-      if (err) {
-        return resp.status(400).send({ message: `Error al salvar la base de datos:${err}` }); // duda cambio de 500 a 400
+      if (!req.body.name || !req.body.price) {
+        return next(400);
       }
-      return resp.status(200).send({ product: productStored });
-    });
+      return product.save((err, productStored) => {
+        if (err) {
+          return resp.status(400).send({ message: `Error al salvar la base de datos:${err}` }); // duda cambio de 500 a 400
+        }
+        return resp.status(200).json(productStored);
+      });
+    } catch (err) {
+      next(err);
+    }
   },
   // GET
   getProducts: (req, resp) => {

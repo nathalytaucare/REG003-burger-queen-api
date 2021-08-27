@@ -119,14 +119,14 @@ module.exports = {
       const { uid } = req.params;
       await User.findById(uid, async (err, user) => {
         if (err) {
-          return resp.status(500).send({ message: 'error' });
+          return resp.status(404).send({ message: 'error' });
         }
         if (!user) {
           return resp.status(404).send({ message: 'El usuario no existe' });
         }
         await user.remove((fail) => {
           if (fail) {
-            return resp.status(500).send({ message: 'error' });
+            return resp.status(404).send({ message: 'error' });
           }
           return resp.status(200).send({ message: 'se eliminó el usuario' });
         });
