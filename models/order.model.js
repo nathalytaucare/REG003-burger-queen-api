@@ -8,6 +8,7 @@ const orderSchema = new Schema(
     },
     client: {
       type: String,
+      required: false,
     },
     products: [
       {
@@ -24,8 +25,9 @@ const orderSchema = new Schema(
     ],
     status: {
       type: String,
-      enum: ['pending', 'canceled', 'delivering', 'delivered'],
+      enum: ['pending', 'canceled', 'delivering', 'delivered', 'preparing'],
       default: 'pending',
+      required: false,
     },
     dateEntry: {
       type: Date,

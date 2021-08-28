@@ -1,25 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 const { isAdmin } = require('../middleware/auth');
-const { validateEmail } = require('./util/util');
-// PAGINATION
-/*
-const paginate = (sourceList, page, perPage) => {
-  const totalCount = sourceList.length;
-  const lastPage = Math.floor(totalCount / perPage);
-  const sliceBegin = page * perPage;
-  console.log(sliceBegin);
-  const sliceEnd = sliceBegin + perPage - 5;
-  console.log(sliceEnd);
-  const pageList = sourceList.slice(sliceBegin, sliceEnd);
-  console.log(pageList);
-  return {
-    pageData: pageList,
-    nextPage: page < lastPage ? page + 1 : null,
-    totalCount,
-  };
-};
-*/
+const { validateEmail, pagination } = require('./util/util');
 
 module.exports = {
   // POST
@@ -30,18 +12,13 @@ module.exports = {
       user.password = bcrypt.hashSync(req.body.password, 10);
       user.roles = req.body.roles;
 
-      if (req.body.email === '' || req.body.password === '') {
-        return next(400);
-      }
-      const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      if (!emailRegex.test(req.body.email) || req.body.password.length < 5) {
-        return next(400);
-      }
+      if (req.body.email === '' || req.body.password === '') return next(400);
+
+      if (!validateEmail(req.body.email) || req.body.password.length < 3) return next(400);
+
       return user.save((err, userStored) => {
-        if (err) {
-          return resp.status(403).send({ message: `Error al salvar la base de datos:${err}` });
-        }
-        // console.log({ user: userStored.email, userStored._id, userStored.roles });
+        if (err) return resp.status(403).send({ message: `Error al salvar la base de datos:${err}` });
+
         return resp.status(200).send({
           _id: userStored._id,
           email: userStored.email,
@@ -65,12 +42,8 @@ module.exports = {
 
       const url = `${req.protocol}://${req.get('host') + req.path}`;
 
-      const links = {
-        first: `${url}?limit=${options.limit}&page=1`,
-        prev: users.hasPrevPage ? `${url}?limit=${options.limit}&page=${options.page - 1}` : `${url}?limit=${options.limit}&page=${options.page}`,
-        next: users.hasNextPage ? `${url}?limit=${options.limit}&page=${options.page + 1}` : `${url}?limit=${options.limit}&page=${options.page}`,
-        last: `${url}?limit=${options.limit}&page=${users.totalPages}`,
-      };
+      const links = pagination(users, url, options.page, options.limit, users.totalPages);
+
       resp.links(links);
       return resp.status(200).json(users.docs);
     } catch (err) {
@@ -81,35 +54,14 @@ module.exports = {
   getUser: async (req, resp, next) => {
     try {
       const { uid } = req.params;
-
-      // const emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-      const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      const user = (emailRegex.test(uid))
+      const user = (validateEmail(uid))
         ? await User.findOne({ email: uid })
         : await User.findById(uid);
-
-      /*   User.findOne({ email: uid }, (err, myUser) => {
-        console.log(myUser);
-      }); */
       if (!user) {
         return next(404);
       }
       return resp.status(200).send(user);
-
-      /*  await User.findById(uid, (err, user) => {
-        if (err) {
-          console.log(`Error: ${err}`);
-          return next(404);
-        }
-        if (!user) {
-          console.log('No user');
-          return next(404);
-        }
-        return resp.status(200).send({ user });
-
-      } ) */
     } catch (error) {
-      console.log(`Error: ${error}`);
       return next(404);
     }
   },
@@ -117,14 +69,33 @@ module.exports = {
   deleteUser: async (req, resp, next) => {
     try {
       const { uid } = req.params;
-      await User.findById(uid, async (err, user) => {
+      const user = (validateEmail(uid));
+      // ? await User.findOne({ email: uid })
+      // : await User.findById(uid);
+      if (!user) {
+        await User.findById(uid, async (err, userId) => {
+          if (err) {
+            return resp.status(404).send({ message: 'Error' });
+          }
+          if (!userId) {
+            return resp.status(404).send({ message: 'El usuario no existe' });
+          }
+          await userId.remove((fail) => {
+            if (fail) {
+              return resp.status(500).send({ message: 'error' });
+            }
+            return resp.status(200).send({ message: 'se eliminó el usuario' });
+          });
+        });
+      }
+      await User.findOne({ email: uid }, async (err, userEmail) => {
         if (err) {
-          return resp.status(404).send({ message: 'error' });
+          return resp.status(404).send({ message: 'Error' });
         }
-        if (!user) {
+        if (!userEmail) {
           return resp.status(404).send({ message: 'El usuario no existe' });
         }
-        await user.remove((fail) => {
+        await userEmail.remove((fail) => {
           if (fail) {
             return resp.status(404).send({ message: 'error' });
           }
@@ -140,26 +111,34 @@ module.exports = {
     try {
       const { uid } = req.params;
       const update = req.body;
-      // console.log(isAdmin(req));
-      if (!isAdmin(req) && req.body.roles) {
-        return next(403);
-      }
-      update.password = bcrypt.hashSync(req.body.password, 10);
+      if (!isAdmin(req) && req.body.roles) return next(403);
       const user = (validateEmail(uid))
-        ? await User.findOneAndUpdate({ email: uid }, update)
-        : await User.findByIdAndUpdate(uid, update);
-
+        ? await User.findOne({ email: uid })
+        : await User.findById(uid);
+      if (!user) return next(404);
+      if (!req.body.email && !req.body.password) return next(400);
+      update.password = bcrypt.hashSync(req.body.password, 10);
       if (!user) {
-        return resp.status(404).send({ message: 'El usuario no existe' });
+        await User.findByIdAndUpdate(uid, update, (err, userUpdate) => {
+          if (err) {
+            return resp.status(500).send({ message: 'Error al realizar la petición' });
+          }
+          if (!userUpdate) {
+            return resp.status(404).send({ message: 'El usuario no existe' });
+          }
+          return resp.status(200).send({ product: userUpdate });
+        });
       }
-
-      if (!req.body.email && !req.body.password) {
-        console.log('entro en put 400');
-        return next(400);
-      }
-
-      return resp.status(200).send({ user });
-    } catch (error) {
+      await User.findOneAndUpdate({ email: uid }, update, (err, userUpdate) => {
+        if (err) {
+          return resp.status(500).send({ message: 'Error al realizar la petición' });
+        }
+        if (!userUpdate) {
+          return resp.status(404).send({ message: 'El usuario no existe' });
+        }
+        return resp.status(200).send({ product: userUpdate });
+      });
+    } catch (err) {
       return next(404);
     }
   },
