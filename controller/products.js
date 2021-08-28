@@ -65,24 +65,28 @@ module.exports = {
   },
   // PUT
   putProduct: (req, resp, next) => {
-    const { productId } = req.params;
-    const update = req.body;
-    console.log(req.body.price);
-    return Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
-      if (err) {
-        console.log('err', productUpdate);
-        return resp.status(404).send({ message: 'Error al realizar la petición' });
-      }
-      // if (typeof req.body.price !== 'number' && typeof req.body.name !== 'string') {
-      //   return next(400);
-      // }
-      if (!productUpdate) {
-        return resp.status(404).send({ message: 'El producto no existe' });
-      }
-      if (!req.body.name && !req.body.price) {
-        return next(400);
-      }
-      return resp.status(200).send(productUpdate);
-    });
+    try {
+      const { productId } = req.params;
+      const update = req.body;
+      console.log(req.body.price);
+      return Product.findByIdAndUpdate(productId, update, (err, productUpdate) => {
+        if (err) {
+          console.log('err', productUpdate);
+          return resp.status(404).send({ message: 'Error al realizar la petición' });
+        }
+        // if (typeof req.body.price !== 'number' && typeof req.body.name !== 'string') {
+        //   return next(400);
+        // }
+        if (!productUpdate) {
+          return resp.status(404).send({ message: 'El producto no existe' });
+        }
+        if (!req.body.name && !req.body.price) {
+          return next(400);
+        }
+        return resp.status(200).send(productUpdate);
+      });
+    } catch (err) {
+      return next(err);
+    }
   },
 };

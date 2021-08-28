@@ -26,6 +26,7 @@ const orderSchema = new Schema(
       type: String,
       enum: ['pending', 'canceled', 'delivering', 'delivered'],
       default: 'pending',
+      reqire: false,
     },
     dateEntry: {
       type: Date,
