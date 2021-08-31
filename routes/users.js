@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/auth');
 const {
   getUsers, getUser, deleteUser, putUser, postUser,
 } = require('../controller/users');

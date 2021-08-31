@@ -42,20 +42,22 @@ module.exports = {
     try {
       const { orderId } = req.params;
 
-      await Order.findById(orderId, (err, order) => {
+      await Order.findById(orderId, async (err, order) => {
         if (err) {
-          return resp.status(500);
+          return resp.status(404).send({ message: 'Error al realizar la petición' });
         }
-        Product.populate(order, { path: 'products.product' },
-          (fail, orderPopulate) => {
-            if (fail) {
-              return resp.status(500);
-            }
-            if (!orderPopulate) {
-              return resp.status(404);
-            }
-            return resp.status(200).send(orderPopulate);
-          });
+        if (!order) {
+          return resp.status(404).send({ message: 'Orden no encontrada' });
+        }
+        await Product.populate(order, { path: 'products.product' }, (fail, orderPopulate) => {
+          if (fail) {
+            return resp.status(500);
+          }
+          if (!orderPopulate) {
+            return resp.status(404);
+          }
+          return resp.status(200).send(orderPopulate);
+        });
       });
     } catch (error) {
       return next(404);
@@ -79,6 +81,9 @@ module.exports = {
       if (req.body.client === '') {
         return resp.send(400);
       }
+      if (!req.body.userId) {
+        return resp.send(400);
+      }
 
       const newOrderSaved = await newOrder.save();
 
@@ -95,14 +100,14 @@ module.exports = {
   deleteOrder: async (req, resp, next) => {
     try {
       const { orderId } = req.params;
-      await Order.findById(orderId, (err, order) => {
+      await Order.findById(orderId, async (err, order) => {
         if (err) {
           return resp.status(404).send({ message: 'error' });
         }
         if (!order) {
           return resp.status(404).send({ message: 'La orden no existe' });
         }
-        order.remove((fail) => {
+        await order.remove((fail) => {
           if (fail) {
             return resp.status(500).send({ message: `Error al salvar la base de datos:${fail}` });
           }
