@@ -1,25 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 const { isAdmin } = require('../middleware/auth');
-const { validateEmail } = require('./util/util');
-// PAGINATION
-/*
-const paginate = (sourceList, page, perPage) => {
-  const totalCount = sourceList.length;
-  const lastPage = Math.floor(totalCount / perPage);
-  const sliceBegin = page * perPage;
-  console.log(sliceBegin);
-  const sliceEnd = sliceBegin + perPage - 5;
-  console.log(sliceEnd);
-  const pageList = sourceList.slice(sliceBegin, sliceEnd);
-  console.log(pageList);
-  return {
-    pageData: pageList,
-    nextPage: page < lastPage ? page + 1 : null,
-    totalCount,
-  };
-};
-*/
+const { validateEmail, pagination } = require('./util/util');
 
 module.exports = {
   // POST
@@ -30,18 +12,13 @@ module.exports = {
       user.password = bcrypt.hashSync(req.body.password, 10);
       user.roles = req.body.roles;
 
-      if (req.body.email === '' || req.body.password === '') {
-        return next(400);
-      }
-      const emailRegex = /[\w._%+-]+@[\w.-]+/g;
-      if (!emailRegex.test(req.body.email) || req.body.password.length < 3) {
-        return next(400);
-      }
+      if (req.body.email === '' || req.body.password === '') return next(400);
+
+      if (!validateEmail(req.body.email) || req.body.password.length < 3) return next(400);
+
       return user.save((err, userStored) => {
-        if (err) {
-          return resp.status(403).send({ message: `Error al salvar la base de datos:${err}` });
-        }
-        // console.log({ user: userStored.email, userStored._id, userStored.roles });
+        if (err) return resp.status(403).send({ message: `Error al salvar la base de datos:${err}` });
+
         return resp.status(200).send({
           _id: userStored._id,
           email: userStored.email,
@@ -65,12 +42,8 @@ module.exports = {
 
       const url = `${req.protocol}://${req.get('host') + req.path}`;
 
-      const links = {
-        first: `${url}?limit=${options.limit}&page=1`,
-        prev: users.hasPrevPage ? `${url}?limit=${options.limit}&page=${options.page - 1}` : `${url}?limit=${options.limit}&page=${options.page}`,
-        next: users.hasNextPage ? `${url}?limit=${options.limit}&page=${options.page + 1}` : `${url}?limit=${options.limit}&page=${options.page}`,
-        last: `${url}?limit=${options.limit}&page=${users.totalPages}`,
-      };
+      const links = pagination(users, url, options.page, options.limit, users.totalPages);
+
       resp.links(links);
       return resp.status(200).json(users.docs);
     } catch (err) {
@@ -84,29 +57,11 @@ module.exports = {
       const user = (validateEmail(uid))
         ? await User.findOne({ email: uid })
         : await User.findById(uid);
-
-      /*   User.findOne({ email: uid }, (err, myUser) => {
-        console.log(myUser);
-      }); */
       if (!user) {
         return next(404);
       }
       return resp.status(200).send(user);
-
-      /*  await User.findById(uid, (err, user) => {
-        if (err) {
-          console.log(`Error: ${err}`);
-          return next(404);
-        }
-        if (!user) {
-          console.log('No user');
-          return next(404);
-        }
-        return resp.status(200).send({ user });
-
-      } ) */
     } catch (error) {
-      console.log(`Error: ${error}`);
       return next(404);
     }
   },
@@ -142,7 +97,7 @@ module.exports = {
         }
         await userEmail.remove((fail) => {
           if (fail) {
-            return resp.status(500).send({ message: 'error' });
+            return resp.status(404).send({ message: 'error' });
           }
           return resp.status(200).send({ message: 'se eliminó el usuario' });
         });

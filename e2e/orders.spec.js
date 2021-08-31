@@ -212,6 +212,7 @@ describe('GET /orders/:orderId', () => {
       .then((responses) => {
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
+        // console.log(Promise.all([responses[0].json(), responses[1].json()]));
         return Promise.all([responses[0].json(), responses[1].json()]);
       })
       .then(([product, user]) => fetchAsTestUser('/orders', {

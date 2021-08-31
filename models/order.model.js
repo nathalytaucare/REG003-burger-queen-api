@@ -8,10 +8,11 @@ const orderSchema = new Schema(
     },
     client: {
       type: String,
+      // required: false,
     },
     products: [
       {
-        _id: false,
+        // _id: false,
         qty: {
           type: Number,
           default: 1,
@@ -24,18 +25,18 @@ const orderSchema = new Schema(
     ],
     status: {
       type: String,
-      enum: ['pending', 'canceled', 'delivering', 'delivered'],
+      enum: ['pending', 'canceled', 'delivering', 'delivered', 'preparing'],
       default: 'pending',
-      reqire: false,
+      // required: false,
     },
     dateEntry: {
       type: Date,
       default: Date.now(),
-      required: false,
+      // required: false,
     },
     dateProcessed: {
       type: Date,
-      require: false,
+      // required: false,
     },
 
   },
