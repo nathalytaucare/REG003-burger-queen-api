@@ -36,7 +36,6 @@ module.exports = {
       const { orderId } = req.params;
       if (!orderId.match(/^[0-9a-fA-F]{24}$/)) return next(404);
       const order = await Order.findOne({ _id: orderId });
-      console.log(order);
       if (!order) {
         return resp.status(404).send({ message: 'Orden no encontrada' });
       }
@@ -85,6 +84,7 @@ module.exports = {
   deleteOrder: async (req, resp, next) => {
     try {
       const { orderId } = req.params;
+      if (!orderId.match(/^[0-9a-fA-F]{24}$/)) return next(404);
       const order = await Order.findById(orderId);
       if (!order) {
         return resp.status(404).send({ message: 'La orden no existe' });
@@ -103,6 +103,7 @@ module.exports = {
   putOrder: async (req, resp, next) => {
     try {
       const { orderId } = req.params;
+      if (!orderId.match(/^[0-9a-fA-F]{24}$/)) return next(404);
       const update = req.body;
 
       if (update.status === 'delivered') {
