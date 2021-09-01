@@ -113,38 +113,6 @@ module.exports = {
 
       if (!userUpdate) return resp.status(404).send({ message: 'El usuario no existe' });
       return resp.status(200).send({ user: userUpdate });
-
-      /*
-      if (!user) {
-        const userUpdate = await User.findByIdAndUpdate(uid, update);
-
-      , (err, userUpdate) => {
-          if (err) {
-            return resp.status(500).send({ message: `Error al realizar la petición: ${err}` });
-          }
-          if (!userUpdate) {
-            return resp.status(404).send({ message: 'El usuario no existe' });
-          }
-        // if (Object.keys(req.body).length === 0) return next(400);
-
-      }
-
-      await User.findOneAndUpdate({ email: uid }, update, (err, userUpdate) => {
-
-        if (err) {
-          return resp.status(500).send({ message: 'Error al realizar la petición' });
-        }
-
-        if (!userUpdate) {
-          return resp.status(404).send({ message: 'El usuario no existe' });
-        }
-
-        // if (Object.keys(req.body).length === 0) return next(400);
-
-        if (req.body.email === '' && req.body.password === '') return next(400);
-
-        return resp.status(200).send({ user: userUpdate });
-      }); */
     } catch (err) {
       return next(err);
     }
