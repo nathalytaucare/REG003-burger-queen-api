@@ -60,9 +60,9 @@ module.exports = {
   },
 
   // DELETE
-  deleteProduct: (req, resp) => {
+  deleteProduct: async (req, resp) => {
     const { productId } = req.params;
-    Product.findById(productId, (err, product) => {
+    await Product.findById(productId, async (err, product) => {
       if (err) {
         return resp.status(404).send({ message: 'Error al realizar la petición' });
       }
@@ -70,7 +70,7 @@ module.exports = {
         return resp.status(404).send({ message: 'El producto no existe' });
       }
 
-      return product.remove((fail) => {
+      await product.remove((fail) => {
         if (fail) {
           return resp.status(500).send({ message: 'Error al eliminar producto' });
         }
@@ -103,7 +103,7 @@ module.exports = {
         return resp.status(200).send(productNew);
       });
     } catch (err) {
-      next(err);
+      next(404);
     }
   },
 };
