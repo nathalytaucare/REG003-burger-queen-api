@@ -20,6 +20,7 @@ const productSchema = mongoose.Schema(
     type: {
       type: String,
       required: false,
+      default: 'burger',
     },
     dateEntry: {
       type: Date,
