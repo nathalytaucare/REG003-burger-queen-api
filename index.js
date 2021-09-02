@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const cors = require('cors');
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
@@ -9,7 +10,7 @@ const pkg = require('./package.json');
 const { port, dbUrl, secret } = config;
 
 const app = express();
-
+app.use(cors());
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
 mongoose
   .connect(dbUrl, {
